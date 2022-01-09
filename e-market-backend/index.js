@@ -11,6 +11,7 @@ const stripeRoute = require("./routes/stripeRoute");
 const cors = require("cors");
 
 dotenv.config();
+app.use(cors({ origin: "*", credentials: true, optionSuccessStatus: 200 }));
 
 mongoose
   .connect(process.env.MONGODB_URL)
@@ -25,7 +26,6 @@ app.use("/api/product", productRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/order", orderRoute);
 app.use("/api/stripe", stripeRoute);
-app.use(cors());
 
 app.listen(9000, () => {
   console.log("Server Running at 9000");

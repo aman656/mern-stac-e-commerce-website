@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { responsive } from './Small'
-
+import {Link} from 'react-router-dom'
 
 
 
@@ -50,11 +50,13 @@ color:gray;
 const CategoryItem = ({item})=>{
     return(
         <Container>
+            <Link to={`/products/${item.category}`}>
             <Image src={item.image} />
             <Detail>
             <Title>{item.title}</Title>
             <Button>Buy Now</Button>
             </Detail>
+            </Link>
         </Container>
     )
 

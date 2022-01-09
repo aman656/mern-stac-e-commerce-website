@@ -5,6 +5,8 @@ import Product from '../components/Product'
 import End from '../components/End'
 import Contact from '../components/Contact'
 import { responsive } from '../components/Small'
+import { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 
 const Container =styled.div``
@@ -36,23 +38,35 @@ font-size:16px`
 
 
 const ShowingProduct = ()=>{
+    const history = useHistory()
+    const category = history.location.pathname.split("/")[2]
+    const [filters,setFilters]=  useState({})
+    const [sorting,setSorting] = useState("new")
+    const filterHandler = (e)=>{
+        setFilters({...filters,[e.target.name]:e.target.value})
+    }
+    const sortingHandler =(e)=>{
+        setSorting(e.target.value)
+    }
+
     return(
       <Container>
         <Announcement/>
         <Navbar/>
-        <Title>Clothes</Title>
+        <Title>{category.toUpperCase()}</Title>
         <Filtering>
             <Filter>
                 <Text>Filter Items:</Text>
-                <Select>
-                <Option disabled selected>Color</Option>
+                <Select name='color' onChange={filterHandler}>
+                <Option disabled defaultValue>Color</Option>
                     <Option>Pink</Option>
                     <Option>Orange</Option>
                     <Option>Red</Option>
                     <Option>Black</Option>
                     <Option>White</Option>
+                    <Option>Gray</Option>
                 </Select>
-                <Select>
+                <Select name='size' onChange={filterHandler}>
                 <Option disabled selected>Size</Option>
                     <Option>Large</Option>
                     <Option>X-Large</Option>
@@ -66,17 +80,17 @@ const ShowingProduct = ()=>{
             </Filter>
             <Filter>
                 <Text>Sort Items:</Text>
-                <Select>
-                <Option>New</Option>
-                <Option>Old</Option>
-                <Option>Price (ASC)</Option>
-                <Option>Price (DESC)</Option>
+                <Select onChange={sortingHandler}>
+                <Option value="new">New</Option>
+                <Option value="old">Old</Option>
+                <Option value="asc">Price (ASC)</Option>
+                <Option value="dsc">Price (DESC)</Option>
                    
                 </Select>
                
             </Filter>
         </Filtering>
-        <Product/>
+        <Product  category={category} filters={filters} sort = {sorting} />
         <Contact/>
         <End/>
         </Container>

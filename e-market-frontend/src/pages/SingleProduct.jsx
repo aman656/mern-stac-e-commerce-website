@@ -3,9 +3,13 @@ import Navbar from '../components/Navbar'
 import Announcement from '../components/Announcement'
 import Contact from '../components/Contact'
 import End from '../components/End'
-import Pants from '../assets/pants.png'
 import { Add, Remove } from '@material-ui/icons'
 import { responsive } from '../components/Small'
+import { useHistory } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import {useDispatch} from 'react-redux'
+import {addProduct} from '../store/cart'
 
 
 
@@ -88,6 +92,7 @@ const AmountContainer = styled.div`
   display: flex;
   align-items: center;
   font-weight: 700;
+  cursor:pointer;
 `;
 
 const Amount = styled.span`
@@ -117,43 +122,76 @@ const Button = styled.button`
 
 
 const SingleProduct = ()=>{
+  const history = useHistory()
+  const id = history.location.pathname.split("/")[2]
+  const [proid,setProId] = useState({})
+  const [quantity,setQuantity] = useState(1)
+  const [selectedcolor,setSelectedColor]=useState("")
+  const [selectedsize,setSelectedSize]=useState("")
+  const dispatch = useDispatch()
+  const quantityHandler = (type)=>{
+    if(type==="dec"){
+      quantity >1 && setQuantity(quantity-1)
+    }else{
+      setQuantity(quantity+1)
+    }
+
+  }
+ 
+  const cartHandler = ()=>{
+    dispatch(addProduct({...proid,quantity,selectedcolor,selectedsize}))
+      
+  }
+  useEffect(()=>{
+    const gettingSinglee =async()=>{
+      try{
+      const res = await axios.get(`http://localhost:9000/api/product/find/${id}`)
+      setProId(res.data)
+      }catch(err){
+        console.log(err)
+      }
+    } 
+    gettingSinglee()
+  },[id])
+ 
     return(
         <Container>
             <Navbar/>
             <Announcement/>
             <Wrapper>
                 <ImgContainer>
-                <Image src={Pants} />
+                <Image src={proid.img} />
                 </ImgContainer>
                 <Detail>
-                    <Title>Dream Shirt</Title>
-                    <Desc>A shirt to wear all year with comfort. Just Buy and come again</Desc>
-                    <Price>$20</Price>
+                    <Title>{proid.title}</Title>
+                    <Desc>{proid.desc}</Desc>
+                    <Price>${proid.price}</Price>
                     <FilterContainer>
                     <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor color="black" />
-              <FilterColor color="darkblue" />
-              <FilterColor color="gray" />
+              {proid.color?.map((c)=>(
+                <FilterColor color={c}  onClick={()=>setSelectedColor(c)} />
+              ))}
+             
             </Filter>
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
+              <FilterSize onChange={(e)=>setSelectedSize(e.target.value)}>
+                {proid.size?.map((s)=>(
+                  <FilterSizeOption>{s}</FilterSizeOption>
+                ))}
+               
+             
               </FilterSize>
             </Filter>
           </FilterContainer>
           <AddContainer>
             <AmountContainer>
-              <Remove/>
-              <Amount>1</Amount>
-            <Add/>
+              <Remove onClick = {()=>quantityHandler("dec")} />
+              <Amount>{quantity}</Amount>
+            <Add  onClick = {()=>quantityHandler("inc")}  />
             </AmountContainer>
-            <Button>ADD TO CART</Button>
+            <Button onClick={cartHandler}>ADD TO CART</Button>
           </AddContainer>
                 </Detail>
               

@@ -29,17 +29,20 @@ export const items = [
     {
         id:1,
         title:"Shirt",
-        image:shirt
+        image:shirt,
+        category:"shirt"
     },
     {
         id:2,
         title:"Pants",
-        image:pants
+        image:pants,
+        category:"pants"
     },
     {
         id:3,
         title:"Coats",
-        image:coats
+        image:coats,
+        category:'coats'
     }
 
 ]

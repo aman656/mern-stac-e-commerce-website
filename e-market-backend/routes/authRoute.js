@@ -24,10 +24,10 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const given = req.body.password;
   try {
-    const userfind = await newUser.findOne({ username: req.body.username });
+    const userfind = await newUser.findOne({ email: req.body.email });
     !userfind && res.status(401).json("User not found");
 
-    const hashedPassword = Cryptojs.AES.decrypt(
+    const hashedPassword = await Cryptojs.AES.decrypt(
       userfind.password,
       process.env.SECRET_KEY
     );

@@ -4,6 +4,15 @@ import End from "../components/End"
 import styled from "styled-components"
 import {Add,Remove} from '@material-ui/icons'
 import { responsive } from "../components/Small"
+import {useSelector} from'react-redux'
+import StripeCheckout from 'react-stripe-checkout'
+import { useState,useEffect } from "react"
+import axios from "axios"
+
+
+
+
+
 
 const Wrapper = styled.div`
 padding:20px;
@@ -159,6 +168,28 @@ const Button = styled.button`
 
 
 const Cart=  ()=>{
+  const cart = useSelector(state=>state.cart) 
+  const [stripeToken,setStripeToken]=  useState(null)
+  const onToken = (token)=>{
+    setStripeToken(token)
+
+  }
+  useEffect(()=>{
+    const checkingOut = async()=>{
+      try{
+      const res = await axios.post("http://localhost:9000/api/stripe/pay",{
+        token:stripeToken.id,
+        amount:50*100
+      })
+      console.log(res.data)
+    }
+      catch(err){
+        console.log(err)
+      }
+    }
+    stripeToken &&  checkingOut()
+  },[stripeToken,cart.totalPrice])
+  console.log(stripeToken)
     return(
         <Container>
         <Navbar/>
@@ -175,57 +206,32 @@ const Cart=  ()=>{
             </Top>
             <Bottom>
                 <Info>
-            <Product>
+           {cart.products.map((pro)=>( <Product>
               <ProductDetail>
-                <Image src="https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1614188818-TD1MTHU_SHOE_ANGLE_GLOBAL_MENS_TREE_DASHERS_THUNDER_b01b1013-cd8d-48e7-bed9-52db26515dc4.png?crop=1xw:1.00xh;center,top&resize=480%3A%2A" />
+                <Image src={pro.img}/>
                 <Details>
                   <ProductName>
-                    <b>Product:</b> JESSIE THUNDER SHOES
+                    <b>Product:</b> {pro.title}
                   </ProductName>
                   <ProductId>
-                    <b>ID:</b> 93813718293
+                    <b>ID:</b> {pro._id}
                   </ProductId>
-                  <ProductColor color="black" />
+                  <ProductColor color={pro.color} />
                   <ProductSize>
-                    <b>Size:</b> 37.5
+                    <b>Size:</b> {pro.size}
                   </ProductSize>
                 </Details>
               </ProductDetail>
               <PriceDetail>
                 <ProductAmountContainer>
                   <Add />
-                  <ProductAmount>2</ProductAmount>
+                  <ProductAmount>{pro.quantity}</ProductAmount>
                   <Remove />
                 </ProductAmountContainer>
-                <ProductPrice>$ 30</ProductPrice>
+                <ProductPrice>${pro.price*pro.quantity}</ProductPrice>
               </PriceDetail>
-            </Product>
+            </Product>))}
             <Hr />
-            <Product>
-              <ProductDetail>
-                <Image src="https://i.pinimg.com/originals/2d/af/f8/2daff8e0823e51dd752704a47d5b795c.png" />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> HAKURA T-SHIRT
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> 93813718293
-                  </ProductId>
-                  <ProductColor color="gray" />
-                  <ProductSize>
-                    <b>Size:</b> M
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Add />
-                  <ProductAmount>1</ProductAmount>
-                  <Remove />
-                </ProductAmountContainer>
-                <ProductPrice>$ 20</ProductPrice>
-              </PriceDetail>
-            </Product>
           </Info>
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
@@ -243,9 +249,20 @@ const Cart=  ()=>{
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$ 80</SummaryItemPrice>
+              <SummaryItemPrice>${cart.totalPrice}</SummaryItemPrice>
             </SummaryItem>
-            <Button>CHECKOUT NOW</Button>
+            <StripeCheckout
+              name="E-ZAY SOLUTIONS"
+              image="https://avatars.githubusercontent.com/u/1486366?v=4"
+              billingAddress
+              shippingAddress
+              description={`Your total is $${cart.totalPrice}`}
+              amount={cart.totalPrice * 100}
+              token={onToken}
+              stripeKey={"pk_test_51KGOyoGMJUhLvwvja0n6b4cy8AKwCajsaSytMsyDslSAaqnqCkb0m5poSxYkay8BEDtfegxXj6vEfQs7ptcifqfX00xdPW8KZt"}
+            >
+              <Button>CHECKOUT NOW</Button>
+            </StripeCheckout>
           </Summary>
             </Bottom>
         </Wrapper>

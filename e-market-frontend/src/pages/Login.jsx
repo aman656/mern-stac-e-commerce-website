@@ -1,5 +1,8 @@
 import styled from 'styled-components'
 import { responsive } from '../components/Small'
+import {loginThunk} from '../store/userActions'
+import {useDispatch, useSelector} from 'react-redux'
+import {useState} from 'react'
 
 
 
@@ -30,6 +33,9 @@ flex:1;
 min-width:40%;
 margin:  10px 0px ;
 padding:10px;
+font-size:16px;
+color:black;
+font-weight:900;
 ${responsive({ width: "75%" })}
 `
 
@@ -46,6 +52,10 @@ letter-spacing:1.5px;
 margin-top:5px;
 margin-bottom:10px;
 margin:auto;
+&:disabled{
+    cursor:not-allowed;
+    color:green;
+}
 
 `
 
@@ -58,9 +68,25 @@ text-decoration:underline;
 font-size:18px;
 cursor:pointer;
 `
-
+const Error = styled.span`
+color:red;
+text-align:center;
+font-size:20px;
+font-weight:600;
+margin:5px;
+`
 
 const Login = ()=>{
+    const [email,setEmail]  = useState("")
+    const [password,setPassword] = useState("")
+    const {isFetching,isError} = useSelector((state)=>state.user)
+    const dispatch = useDispatch()
+    const submitHandler = (e)=>{
+        e.preventDefault()
+        loginThunk(dispatch,{email,password})
+
+
+    }
     return(
         <Container>
              <Container>
@@ -68,11 +94,12 @@ const Login = ()=>{
                 <Title>Login Please</Title>
                 <Form>
              
-                    <Input  placeholder='Enter You Email' />
-                    <Input  placeholder='Enter Your Password' />
-                    <Input placeholder='Confirm Password'/>
+                    <Input type="email"  placeholder='Enter You Email' onChange={(e)=>setEmail(e.target.value)} />
+                    <Input type="password" placeholder='Enter Your Password'  onChange={(e)=>setPassword(e.target.value)} />
+                 
                    
-                    <Button>Login</Button>
+                    <Button onClick={submitHandler} disabled={isFetching} >Login</Button>
+                   {isError && <Error>An error Occured</Error>}
                     <Link>Forget Password</Link>
                     <Link>Create an Account</Link>
                 </Form>

@@ -56,7 +56,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/earn", tokenAuthorizationandAdmin, async (req, res) => {
-  const date = new Date();
+  const date = new Date("Feb 11, 2022 01:15:00");
   const previousmonth = new Date(date.setMonth(date.getMonth() - 1));
   const aurprevious = new Date(
     new Date().setMonth(previousmonth.getMonth() - 1)

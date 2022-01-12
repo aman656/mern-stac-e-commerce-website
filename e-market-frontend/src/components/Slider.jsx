@@ -62,10 +62,12 @@ flex:1;
 padding:50px;`
 
 const Name =styled.h1`
-font-size:50px`
+font-size:70px;
+font-weight:900;
+`
 const Desc =styled.h1`
 margin:50px 0;
-font-size:20px;
+font-size:30px;
 font-weight:700;
 letter-spacing:3px;`
 const Button =styled.button`
@@ -95,7 +97,7 @@ const Slider = ()=>{
 
                 <Slide bg={slide.bg} key={slide.id}>
                     <ImageContain>
-                        <Image src={BlackSuit}/>
+                        <Image src="https://o.remove.bg/downloads/9bc2c831-d82d-4b5c-ad08-ea9f1d00a6db/istockphoto-1284839442-612x612-removebg-preview.png"/>
                     </ImageContain>
                     <DetailContain>
                         <Name>{slide.name}</Name>

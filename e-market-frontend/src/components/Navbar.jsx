@@ -27,7 +27,8 @@ flex:1
 
 `
 const Language = styled.span`
-font-size:14px;
+font-size:18px;
+font-weight:600;
 cursor:pointer;
 ${responsive({ display: "none" })}
 `
@@ -49,7 +50,10 @@ flex:1;
 text-align:center;
 `
 const Logo = styled.h1`
-font-weight:bold;
+font-weight:700;
+font-style:italic;
+font-size:40px;
+;
 ${responsive({ fontSize: "24px" })}
 `
 
@@ -61,8 +65,10 @@ justify-content:flex-end;
 ${responsive({ flex: 2, justifyContent: "center" })}
 `
 const Menu = styled.div`
-font-size:14px;
+font-size:20px;
 cursor:pointer;
+font-weight:600;
+letter-spacing:1px;
 margin-left:25px;
 ${responsive({ fontSize: "12px", marginLeft: "10px" })}
 `
